@@ -10,6 +10,7 @@ def query_recommendations(q):
 
 @app.route('/recommendations', methods=['POST', 'GET'])
 def recommendations():
+    query="default"
     if request.method == 'POST':
         query = request.form['query']
         #add a party for number of recommendations to ask for
