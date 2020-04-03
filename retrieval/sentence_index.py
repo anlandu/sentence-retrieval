@@ -35,18 +35,16 @@ def add_doc(writer, id):
   doc_tree = ET.parse(path + '/Documents_xml/' + id + '.xml')
   doc_root = doc_tree.getroot()
   
-  content = ''
+  i=0
   for section in doc_root:
     # print(section.tag, section.attrib)
     for sent in section:
-        content += sent.text + '\n'
-    
-  writer.add_document(id=id, content=content)
+        writer.add_document(id=str(id)+str(i), content=sent.text)
+        i+=1
   #summary_tree = ET.parse(path + '/summary/' + id + '.gold.txt')
   #summary_root = summary_tree.getroot() 
   
 def search_index(query, dirname):
-  r_out=[]
   ix=index.open_dir(dirname, schema=get_schema())
   og = OrGroup.factory(0.9)
   qp = QueryParser("content", schema=get_schema(), group=og)
@@ -59,9 +57,8 @@ def search_index(query, dirname):
 
 
 def main():
-  ix_dir='/p/academicstyle/retrieval/index'
+  ix_dir='/p/academicstyle/retrieval/sentence_index'
   make_clean_index(ix_dir) 
-
   r=search_index("Initially, only the keywords returned by the first ten heuristics are considered.", ix_dir)
   for result in r:
     print(result)
