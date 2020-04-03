@@ -51,16 +51,17 @@ def search_index(query, dirname):
   qp.add_plugin(FuzzyTermPlugin())
   q = qp.parse(query)
   searcher=ix.searcher()
-  results=searcher.search(q)
+  results=searcher.search(q, limit=None)
   return results
 
 
 
 def main():
   ix_dir='/p/academicstyle/retrieval/sentence_index'
-  make_clean_index(ix_dir) 
+  # make_clean_index(ix_dir) 
   r=search_index("Initially, only the keywords returned by the first ten heuristics are considered.", ix_dir)
-  for result in r:
+  print(len(r))
+  for result in r[:10]:
     print(result)
 
   #print(get_doc_ids())
