@@ -13,4 +13,5 @@ def initialize():
         make_clean_index(INDEX_DIR)
     print("build index complete")
 
+print("Initializing build_index.py")
 initialize()
