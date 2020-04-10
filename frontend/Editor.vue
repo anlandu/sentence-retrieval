@@ -22,7 +22,8 @@
 <script>
 // Import the editor
 import { Editor, EditorContent, EditorMenuBubble } from "tiptap";
-import { Slice } from 'prosemirror-model'
+import { Slice } from "prosemirror-model";
+var apiURL = "http://localhost:5000/recommendations";
 
 export default {
   components: {
@@ -38,13 +39,27 @@ export default {
   methods: {
     fixText() {
       const { state } = this.editor;
-      const { selection } = state
+      const { selection } = state;
       const { from, to } = selection;
       const text = state.doc.textBetween(from, to, " ");
-      let transaction = state.tr.replaceSelection()
-      transaction.insertText('<fixed!>')
-      alert('Try fix "' + text + '"')
-      this.editor.view.dispatch(transaction)
+      alert('Try fix "' + text + '"');
+      this.fetchData(text, state);
+    },
+    fetchData: function(queryText, state) {
+      console.log("Quering", queryText);
+      var xhr = new XMLHttpRequest();
+      var self = this;
+      var params = new FormData();
+      params.append("query", queryText);
+      xhr.open("POST", apiURL);
+      xhr.onload = function() {
+        self.recommendations = JSON.parse(xhr.responseText).recommendations;
+        console.log(self.recommendations);
+        let transaction = state.tr.replaceSelection();
+        transaction.insertText(self.recommendations[0]);
+        self.editor.view.dispatch(transaction);
+      };
+      xhr.send(params);
     }
   },
   mounted() {

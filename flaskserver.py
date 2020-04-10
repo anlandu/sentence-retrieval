@@ -1,8 +1,7 @@
 #https://flask.palletsprojects.com/en/1.1.x/quickstart/#apis-with-json
 from flask import Flask, request
+from flask_cors import CORS
 from retrieval.sentence_index import search_index, make_clean_index
-#import subprocess
-
 import os
 INDEX_DIR = 'retrieval/sentence_index'
 DATA_DIR = 'data/scisummnet'
@@ -19,6 +18,7 @@ def initialize():
 
 initialize()
 app = Flask(__name__)
+CORS(app)
 
 
 def query_recommendations(q, n=10):
