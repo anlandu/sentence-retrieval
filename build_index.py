@@ -1,4 +1,5 @@
 import os
+import time
 from retrieval.sentence_index import make_clean_index
 DATA_DIR='data/scisummnet'
 INDEX_DIR='retrieval/sentence_index'
@@ -15,3 +16,5 @@ def initialize():
 
 print("Initializing build_index.py")
 initialize()
+while True:
+    time.sleep(10)
