@@ -59,7 +59,7 @@ def search_index(query, dirname):
 
 
 def main():
-  ix_dir='/p/academicstyle/retrieval/index'
+  ix_dir='sentence_index'
   make_clean_index(ix_dir) 
 
   r=search_index("Initially, only the keywords returned by the first ten heuristics are considered.", ix_dir)

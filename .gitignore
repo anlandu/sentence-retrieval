@@ -4,3 +4,5 @@ scisummnet/
 env/
 venv/
 __pycache__/
+__MACOSX
+*.zip
