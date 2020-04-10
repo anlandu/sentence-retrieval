@@ -11,5 +11,6 @@ def initialize():
         os.mkdir(INDEX_DIR)
         print('BUILDING INDEX AT "{0}"'.format(INDEX_DIR))
         make_clean_index(INDEX_DIR)
+    print("build index complete")
 
 initialize()
