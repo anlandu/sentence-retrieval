@@ -16,5 +16,3 @@ def initialize():
 
 print("Initializing build_index.py")
 initialize()
-while True:
-    time.sleep(10)
