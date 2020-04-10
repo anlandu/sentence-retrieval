@@ -7,7 +7,7 @@ from whoosh.qparser import OrGroup
 import xml.etree.ElementTree as ET
 from os import listdir
 
-ROOT_PATH = '../data/scisummnet/top1000_complete/'
+ROOT_PATH = 'data/scisummnet/top1000_complete/'
 
 
 def get_doc_ids():
