@@ -1,6 +1,7 @@
 #https://flask.palletsprojects.com/en/1.1.x/quickstart/#apis-with-json
 from flask import Flask, request
 from retrieval.sentence_index import search_index, make_clean_index
+from flask_cors import CORS
 import os
 INDEX_DIR = 'retrieval/sentence_index'
 
@@ -10,6 +11,7 @@ if not os.path.exists(INDEX_DIR):
     print('BUILDING INDEX AT "{0}"'.format(INDEX_DIR))
 
 app = Flask(__name__)
+CORS(app)
 
 def query_recommendations(q, n=10):
     #https://stackoverflow.com/questions/8933237/how-to-find-if-directory-exists-in-python    
