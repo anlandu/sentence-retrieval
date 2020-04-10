@@ -1,1 +1,2 @@
-web: gunicorn flaskserver:app --timeout 300
+worker: python build_index.py
+web: gunicorn flaskserver:app
