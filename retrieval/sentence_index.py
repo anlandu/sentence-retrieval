@@ -55,6 +55,7 @@ def search_index(query, dirname):
     q = qp.parse(query)
     searcher = ix.searcher()
     results = searcher.search(q, limit=None)
+    results.fragmenter.surround = 100
     return results
 
 
