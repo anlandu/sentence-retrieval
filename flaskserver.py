@@ -24,7 +24,7 @@ CORS(app)
 def query_recommendations(q, n=10):
     #https://stackoverflow.com/questions/8933237/how-to-find-if-directory-exists-in-python    
     print('QUERYING FOR {0} DOCUMENTS USING "{1}"'.format(n, q)) 
-    return [h['content'] for h in list(search_index(q, 'retrieval/sentence_index'))[:n]]
+    return [h.highlights("content") for h in list(search_index(q, 'retrieval/sentence_index'))[:n]]
 
 @app.route('/recommendations', methods=['POST', 'GET'])
 def recommendations():
