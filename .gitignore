@@ -1,6 +1,7 @@
 scisummnet/
 env/
 venv/
+retrieval/sentence_index/*
 __pycache__/
 __MACOSX
 .DS_Store

@@ -60,7 +60,7 @@ def search_index(query, dirname):
 
 
 def main():
-    ix_dir = 'sentence_index'
+    ix_dir = 'retrieval/sentence_index'
     # make_clean_index(ix_dir)
     r = search_index(
         "Comparisons against related algorithms are also conducted.", ix_dir)
