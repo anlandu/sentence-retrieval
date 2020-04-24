@@ -30,7 +30,7 @@
 // Import the editor
 import { Editor, EditorContent, EditorMenuBubble } from "tiptap";
 import { Slice } from "prosemirror-model";
-var apiURL = "http://localhost:5000/recommendations";
+var apiURL = "recommendations";
 
 export default {
   components: {
