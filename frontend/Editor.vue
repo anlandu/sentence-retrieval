@@ -1,5 +1,12 @@
 <template>
   <div class="editor">
+    <ul v-if="recommendations">
+      <li v-for="(sent, index) in recommendations" :key="index">
+        <a href="#" @click.prevent="replaceSelectionWithRec(index)">
+          <div v-html="sent"></div>
+        </a>
+      </li>
+    </ul>
     <editor-menu-bubble
       :editor="editor"
       :keep-in-bounds="keepInBounds"
@@ -33,7 +40,8 @@ export default {
   data() {
     return {
       keepInBounds: true,
-      editor: null
+      editor: null,
+      recommendations: []
     };
   },
   methods: {
@@ -43,9 +51,9 @@ export default {
       const { from, to } = selection;
       const text = state.doc.textBetween(from, to, " ");
       alert('Try fix "' + text + '"');
-      this.fetchData(text, state);
+      this.fetchData(text);
     },
-    fetchData: function(queryText, state) {
+    fetchData: function(queryText) {
       console.log("Quering", queryText);
       var xhr = new XMLHttpRequest();
       var self = this;
@@ -55,11 +63,17 @@ export default {
       xhr.onload = function() {
         self.recommendations = JSON.parse(xhr.responseText).recommendations;
         console.log(self.recommendations);
-        let transaction = state.tr.replaceSelection();
-        transaction.insertText(self.recommendations[0]);
-        self.editor.view.dispatch(transaction);
       };
       xhr.send(params);
+    },
+    replaceSelectionWithRec: function(index) {
+      const { state } = this.editor;
+      let transaction = state.tr.replaceSelection();
+      var temp = document.createElement("div");
+      temp.innerHTML = this.recommendations[index];
+      transaction.insertText(temp.textContent);
+      this.editor.view.dispatch(transaction);
+      this.recommendations = [];
     }
   },
   mounted() {
@@ -74,6 +88,9 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+a:visited
+  color unset
+
 .editor
   position relative
   max-width 50rem

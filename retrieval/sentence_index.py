@@ -55,17 +55,18 @@ def search_index(query, dirname):
     q = qp.parse(query)
     searcher = ix.searcher()
     results = searcher.search(q, limit=None)
+    results.fragmenter.surround = 100
     return results
 
 
 def main():
     ix_dir = 'sentence_index'
-    make_clean_index(ix_dir)
+    # make_clean_index(ix_dir)
     r = search_index(
-        "Initially, only the keywords returned by the first ten heuristics are considered.", ix_dir)
+        "Comparisons against related algorithms are also conducted.", ix_dir)
     print(len(r))
     for result in r[:10]:
-        print(result)
+        print(result.highlights("content"))
 
 if __name__ == '__main__':
     main()
