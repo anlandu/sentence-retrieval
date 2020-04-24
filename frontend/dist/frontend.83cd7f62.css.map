@@ -1,0 +1,1 @@
+{"version":3,"sources":["custom.styl"],"names":[],"mappings":"AAAA,KACE,gDACF,CACA,GACE,oCACF,CACA,EACE,aACF","file":"frontend.83cd7f62.css","sourceRoot":"..","sourcesContent":["body {\n  font-family: 'franklin-gothic-urw', arial, sans-serif;\n}\nh1 {\n  font-family: 'bodoni-urw', georgia, serif;\n}\np {\n  color: #232d4b;\n}\n"]}

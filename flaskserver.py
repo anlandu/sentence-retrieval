@@ -1,5 +1,5 @@
 #https://flask.palletsprojects.com/en/1.1.x/quickstart/#apis-with-json
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from retrieval.sentence_index import search_index, make_clean_index
 import os
@@ -24,6 +24,10 @@ def query_recommendations(q, n=10):
     #https://stackoverflow.com/questions/8933237/how-to-find-if-directory-exists-in-python    
     print('QUERYING FOR {0} DOCUMENTS USING "{1}"'.format(n, q)) 
     return [h.highlights("content") for h in list(search_index(q, 'retrieval/sentence_index'))[:n]]
+
+@app.route('/<path:path>')
+def send_js(path):
+    return send_from_directory('frontend/dist', path)
 
 @app.route('/recommendations', methods=['POST', 'GET'])
 def recommendations():
