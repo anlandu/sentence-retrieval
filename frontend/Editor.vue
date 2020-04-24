@@ -50,7 +50,6 @@ export default {
       const { selection } = state;
       const { from, to } = selection;
       const text = state.doc.textBetween(from, to, " ");
-      alert('Try fix "' + text + '"');
       this.fetchData(text);
     },
     fetchData: function(queryText) {
