@@ -67,24 +67,5 @@ def main():
     for result in r[:10]:
         print(result)
 
-    # print(get_doc_ids())
-    '''
-  path = ROOT_PATH + 'N07-1011' 
-  id = 'N07-1011'
-  doc_tree = ET.parse(path + '/Documents_xml/' + id + '.xml')
-  doc_root = doc_tree.getroot()
-  
-  for section in doc_root:
-    print(section.tag, section.attrib)
-    for sent in section:
-        print(sent.text)
-  
-  for section in doc_root:
-    print(section.tag, section.attrib)
-    for sent in section:
-        print(sent.text)
-   '''
-
-
 if __name__ == '__main__':
     main()
