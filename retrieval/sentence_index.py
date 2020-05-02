@@ -5,6 +5,7 @@ from whoosh.qparser import QueryParser
 from whoosh.qparser import FuzzyTermPlugin
 from whoosh.qparser import OrGroup
 from whoosh.scoring import BM25F, TF_IDF, Frequency
+from whoosh import analysis
 
 from .scoring import OkBM25, PLN
 
@@ -33,7 +34,8 @@ def make_clean_index(dirname):
 
 
 def get_schema():
-    return Schema(id=ID(unique=True, stored=True), content=TEXT(stored=True))
+    return Schema(id=ID(unique=True, stored=True),
+                  content=TEXT(stored=True, analyzer=analysis.StemmingAnalyzer()))
 
 
 def add_doc(writer, id):
@@ -55,9 +57,10 @@ def search_index(query, dirname):
     ix = index.open_dir(dirname, schema=get_schema())
     og = OrGroup.factory(0.9)
     qp = QueryParser("content", schema=get_schema(), group=og)
-    qp.add_plugin(FuzzyTermPlugin())
+    # qp.add_plugin(FuzzyTermPlugin())
+    # query = ' '.join([(x + '~' if len(x) > 5 else x) for x in query.split(' ')])
     q = qp.parse(query)
-    searcher = ix.searcher(weighting=PLN)
+    searcher = ix.searcher(weighting=OkBM25(B=1.5))
     results = searcher.search(q, limit=None)
     results.fragmenter.surround = 100
     return results
@@ -71,6 +74,7 @@ def main():
     print(len(r))
     for result in r[:10]:
         print(result.highlights("content"))
+
 
 if __name__ == '__main__':
     main()
