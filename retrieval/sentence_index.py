@@ -4,6 +4,10 @@ from whoosh.fields import Schema, ID, TEXT
 from whoosh.qparser import QueryParser
 from whoosh.qparser import FuzzyTermPlugin
 from whoosh.qparser import OrGroup
+from whoosh.scoring import BM25F, TF_IDF, Frequency
+
+from .scoring import OkBM25
+
 import xml.etree.ElementTree as ET
 from os import listdir
 
@@ -53,7 +57,7 @@ def search_index(query, dirname):
     qp = QueryParser("content", schema=get_schema(), group=og)
     qp.add_plugin(FuzzyTermPlugin())
     q = qp.parse(query)
-    searcher = ix.searcher()
+    searcher = ix.searcher(weighting=OkBM25)
     results = searcher.search(q, limit=None)
     results.fragmenter.surround = 100
     return results
