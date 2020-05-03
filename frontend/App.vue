@@ -2,7 +2,7 @@
 
 <template>
   <div class="container">
-    <h1> Hello {{bundler}} </h1>
+    <h1> {{bundler}} </h1>
     <editor />
   </div>
 </template>
@@ -17,13 +17,13 @@ export default Vue.extend({
   },
   data() {
     return {
-      bundler: "Information Retrieval"
+      bundler: "Academic Style Corrector"
     };
   }
 });
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .container
   color #e57200
 </style>

@@ -1,28 +1,34 @@
 <template>
   <div class="editor">
-    <ul v-if="recommendations">
-      <li v-for="(sent, index) in recommendations" :key="index">
-        <a href="#" @click.prevent="replaceSelectionWithRec(index)">
-          <div v-html="sent"></div>
-        </a>
-      </li>
-    </ul>
-    <editor-menu-bubble
-      :editor="editor"
-      :keep-in-bounds="keepInBounds"
-      v-slot="{ commands, isActive, menu }"
-    >
-      <div
-        class="menububble"
-        :class="{ 'is-active': menu.isActive }"
-        :style="`left: ${menu.left}px; bottom: ${menu.bottom}px;`"
+    <div class="textarea">
+      <editor-menu-bubble
+        :editor="editor"
+        :keep-in-bounds="keepInBounds"
+        v-slot="{ commands, isActive, menu }"
       >
-        <button class="menububble__button" :class="{ 'is-active': true }" @click="fixText">
-          <p>Fix this!</p>
-        </button>
-      </div>
-    </editor-menu-bubble>
-    <editor-content :editor="editor" />
+        <div
+          class="menububble"
+          :class="{ 'is-active': menu.isActive }"
+          :style="`left: ${menu.left}px; bottom: ${menu.bottom}px;`"
+        >
+          <button class="menububble__button" :class="{ 'is-active': true }" @click="fixText">
+            <p>Fix this!</p>
+          </button>
+        </div>
+      </editor-menu-bubble>
+      <editor-content :editor="editor"></editor-content>
+    </div>
+    <div class="recommendation">
+      <h2>Suggestions</h2>
+      <ul v-if="recommendations && recommendations.length">
+        <li v-for="(sent, index) in recommendations" :key="index">
+          <a href="#" @click.prevent="replaceSelectionWithRec(index)">
+            <div v-html="sent"></div>
+          </a>
+        </li>
+      </ul>
+      <p v-else>Select a sentence to rewrite!</p>
+    </div>
   </div>
 </template>
 
@@ -31,6 +37,8 @@
 import { Editor, EditorContent, EditorMenuBubble } from "tiptap";
 import { Slice } from "prosemirror-model";
 var apiURL = "recommendations";
+
+const testParaphrase=`<p>Understanding the current research trends, problems, and their innovative solutions remains a bottleneck due to the ever-increasing volume of scientific articles. In this paper, we propose NLPExplorer, a completely automatic portal for indexing, searching, and visualizing Natural Language Processing (NLP) research volume. NLPExplorer presents interesting insights from papers, authors, venues, and topics. In contrast to previous topic modelling based approaches, we manually curate five course-grained non-exclusive topical categories namely Linguistic Target (Syntax, Discourse, etc.), Tasks (Tagging, Summarization, etc.), Approaches (unsupervised, supervised, etc.), Languages (English, Chinese,etc.) and Dataset types (news, clinical notes, etc.). Some of the novel features include a list of young popular authors, popular URLs, and datasets, a list of topically diverse papers and recent popular papers. Also, it provides temporal statistics such as yearwise popularity of topics, datasets, and seminal papers. To facilitate future research and system development, we make all the processed datasets accessible through API calls.</p>`
 
 export default {
   components: {
@@ -41,7 +49,8 @@ export default {
     return {
       keepInBounds: true,
       editor: null,
-      recommendations: []
+      recommendations: [],
+      transaction: null
     };
   },
   methods: {
@@ -50,6 +59,7 @@ export default {
       const { selection } = state;
       const { from, to } = selection;
       const text = state.doc.textBetween(from, to, " ");
+      self.transaction = state.tr;
       this.fetchData(text);
     },
     fetchData: function(queryText) {
@@ -61,23 +71,29 @@ export default {
       xhr.open("POST", apiURL);
       xhr.onload = function() {
         self.recommendations = JSON.parse(xhr.responseText).recommendations;
-        console.log(self.recommendations);
       };
       xhr.send(params);
     },
     replaceSelectionWithRec: function(index) {
       const { state } = this.editor;
-      let transaction = state.tr.replaceSelection();
+      transaction = self.transaction;
       var temp = document.createElement("div");
       temp.innerHTML = this.recommendations[index];
       transaction.insertText(temp.textContent);
-      this.editor.view.dispatch(transaction);
+      try {
+        this.editor.view.dispatch(transaction);
+      } catch (RangeError) {
+        alert(
+          "Your selection has changed because of editing, please search again!"
+        );
+      }
       this.recommendations = [];
+      self.transaction = null;
     }
   },
   mounted() {
     this.editor = new Editor({
-      content: "<p>This is just a boring paragraph</p>"
+      content: testParaphrase
     });
   },
   beforeDestroy() {
@@ -86,15 +102,30 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 a:visited
   color unset
 
+a
+  color #232d4b
+
 .editor
   position relative
-  max-width 50rem
+  max-width 90%
   margin 0 auto 5rem
+
+.textarea
+  width 50%
+  height 700px
   box-shadow 0 1px 3px 1px rgba(60, 60, 60, 0.13)
+  float left
+
+div:focus, p:focus
+  outline-style none
+
+.recommendation
+  margin-left 52%
+  width 50%
 
 .menububble
   position absolute
