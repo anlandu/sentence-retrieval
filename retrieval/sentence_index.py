@@ -53,14 +53,25 @@ def add_doc(writer, id):
     #summary_root = summary_tree.getroot()
 
 
-def search_index(query, dirname):
+def search_index(query, score_func_name, dirname):
     ix = index.open_dir(dirname, schema=get_schema())
     og = OrGroup.factory(0.9)
     qp = QueryParser("content", schema=get_schema(), group=og)
     # qp.add_plugin(FuzzyTermPlugin())
     # query = ' '.join([(x + '~' if len(x) > 5 else x) for x in query.split(' ')])
     q = qp.parse(query)
-    searcher = ix.searcher(weighting=OkBM25(B=1.5))
+    score_func = OkBM25()
+    if score_func_name == 'ok':
+        score_func = OkBM25()
+    elif score_func_name == 'bm25f':
+        score_func = BM25F()
+    elif score_func_name == 'pln':
+        score_func = PLN()
+    elif score_func_name == 'tfidf':
+        score_func = TF_IDF()
+    elif score_func_name == 'freq':
+        score_func = Frequency()
+    searcher = ix.searcher(weighting=score_func)
     results = searcher.search(q, limit=None)
     results.fragmenter.surround = 100
     return results

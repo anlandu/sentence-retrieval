@@ -12,13 +12,19 @@
           :style="`left: ${menu.left}px; bottom: ${menu.bottom}px;`"
         >
           <button class="menububble__button" :class="{ 'is-active': true }" @click="fixText">
-            <p>Fix this!</p>
+            <p style="margin:0">Fixit!</p>
           </button>
         </div>
       </editor-menu-bubble>
       <editor-content :editor="editor"></editor-content>
     </div>
     <div class="recommendation">
+      <h2>Scoring Function</h2>
+      <div v-for="func in avail_scoring_func" :key="func[0]">
+        <input type="radio" :id="func[0]" :value="func[0]" v-model="score_func" />
+        <label :for="func[0]">{{func[1]}}</label>
+      </div>
+      <br>
       <h2>Suggestions</h2>
       <ul v-if="recommendations && recommendations.length">
         <li v-for="(sent, index) in recommendations" :key="index">
@@ -38,7 +44,7 @@ import { Editor, EditorContent, EditorMenuBubble } from "tiptap";
 import { Slice } from "prosemirror-model";
 var apiURL = "recommendations";
 
-const testParaphrase=`<p>Understanding the current research trends, problems, and their innovative solutions remains a bottleneck due to the ever-increasing volume of scientific articles. In this paper, we propose NLPExplorer, a completely automatic portal for indexing, searching, and visualizing Natural Language Processing (NLP) research volume. NLPExplorer presents interesting insights from papers, authors, venues, and topics. In contrast to previous topic modelling based approaches, we manually curate five course-grained non-exclusive topical categories namely Linguistic Target (Syntax, Discourse, etc.), Tasks (Tagging, Summarization, etc.), Approaches (unsupervised, supervised, etc.), Languages (English, Chinese,etc.) and Dataset types (news, clinical notes, etc.). Some of the novel features include a list of young popular authors, popular URLs, and datasets, a list of topically diverse papers and recent popular papers. Also, it provides temporal statistics such as yearwise popularity of topics, datasets, and seminal papers. To facilitate future research and system development, we make all the processed datasets accessible through API calls.</p>`
+const testParaphrase = `<p>Understanding the current research trends, problems, and their innovative solutions remains a bottleneck due to the ever-increasing volume of scientific articles. In this paper, we propose NLPExplorer, a completely automatic portal for indexing, searching, and visualizing Natural Language Processing (NLP) research volume. NLPExplorer presents interesting insights from papers, authors, venues, and topics. In contrast to previous topic modelling based approaches, we manually curate five course-grained non-exclusive topical categories namely Linguistic Target (Syntax, Discourse, etc.), Tasks (Tagging, Summarization, etc.), Approaches (unsupervised, supervised, etc.), Languages (English, Chinese,etc.) and Dataset types (news, clinical notes, etc.). Some of the novel features include a list of young popular authors, popular URLs, and datasets, a list of topically diverse papers and recent popular papers. Also, it provides temporal statistics such as yearwise popularity of topics, datasets, and seminal papers. To facilitate future research and system development, we make all the processed datasets accessible through API calls.</p>`;
 
 export default {
   components: {
@@ -50,7 +56,8 @@ export default {
       keepInBounds: true,
       editor: null,
       recommendations: [],
-      transaction: null
+      transaction: null,
+      score_func: "ok"
     };
   },
   methods: {
@@ -68,6 +75,7 @@ export default {
       var self = this;
       var params = new FormData();
       params.append("query", queryText);
+      params.append("score_func", this.score_func);
       xhr.open("POST", apiURL);
       xhr.onload = function() {
         self.recommendations = JSON.parse(xhr.responseText).recommendations;
@@ -90,6 +98,15 @@ export default {
       this.recommendations = [];
       self.transaction = null;
     }
+  },
+  created() {
+    this.avail_scoring_func = [
+      ["ok", "Okapi BM25"],
+      ["bm25f", "BM25F"],
+      ["pln", "Pivoted Length Normalization"],
+      ["tfidf", "TF-IDF"],
+      ["freq", "Frequency"]
+    ];
   },
   mounted() {
     this.editor = new Editor({
@@ -133,10 +150,9 @@ div:focus, p:focus
   display -ms-flexbox
   display flex
   z-index 20
-  background white
+  background #e57200
   box-shadow 0 1px 3px 1px rgba(60, 60, 60, 0.13)
   border-radius 5px
-  padding 0.3rem
   margin-bottom 0.5rem
   -webkit-transform translateX(-50%)
   transform translateX(-50%)
@@ -144,6 +160,12 @@ div:focus, p:focus
   opacity 0
   -webkit-transition opacity 0.2s, visibility 0.2s
   transition opacity 0.2s, visibility 0.2s
+
+.menububble p
+  font-family 'bodoni-urw', georgia, serif
+  font-size 18px
+  font-weight 600
+  color white
 
 .menububble.is-active
   opacity 1

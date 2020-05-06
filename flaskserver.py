@@ -20,10 +20,11 @@ app = Flask(__name__)
 CORS(app)
 
 
-def query_recommendations(q, n=10):
+def query_recommendations(q, score_func, n=10):
     #https://stackoverflow.com/questions/8933237/how-to-find-if-directory-exists-in-python    
-    print('QUERYING FOR {0} DOCUMENTS USING "{1}"'.format(n, q)) 
-    return [h.highlights("content") for h in list(search_index(q, 'retrieval/sentence_index'))[:n]]
+    print('QUERYING "{1}" FOR {0} DOCUMENTS USING {2}'.format(n, q, score_func)) 
+    results = [h.highlights("content") for h in list(search_index(q, score_func, 'retrieval/sentence_index'))[:n]]
+    return [i for i in results if len(i) > 0]
 
 @app.route('/<path:path>')
 def send_js(path):
@@ -34,9 +35,7 @@ def recommendations():
     query="default"
     if request.method == 'POST':
         query = request.form['query']
-        #add a part for number of recommendations to ask for
-        print(request.form)
-    # the code below is executed if the request method
+        score_func = request.form['score_func']
     return {
-        "recommendations" : query_recommendations(query)
+        "recommendations" : query_recommendations(query, score_func)
     }# was GET or the credentials were invalid
