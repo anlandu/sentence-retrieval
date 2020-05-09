@@ -51,7 +51,7 @@ def add_doc(id, writer):
     for section in doc_root:
         # print(section.tag, section.attrib)
         for sent in section:
-            if 30 < len(sent.text) < 120:
+            if 30 < len(sent.text) < 250:
                 writer.add_document(id=str(id)+str(i), content=sent.text)
                 i += 1
     #summary_tree = ET.parse(path + '/summary/' + id + '.gold.txt')
